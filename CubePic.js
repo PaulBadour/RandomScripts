@@ -336,3 +336,20 @@ s.doScramble();
 console.log(s.wface);
 console.log(s.gface);
 console.log(s.rface);
+
+
+// Potential move format:
+
+/*
+
+    R = [
+        [green, COL, -1, 0],
+        [yellow, COL, -1, 0],
+        [blue, COL, 0, -1],
+        [white, COL, -1, 0]
+    ];
+
+    Format: [Color, COL or ROW, Which COl/ROW, Start at start or end of ROW/COL]
+    New Class/Struct seems ideal for this
+
+*/

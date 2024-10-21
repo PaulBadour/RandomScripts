@@ -5,7 +5,7 @@ Class that does all the math for scrambling picture
 Usage:
 
 var s = new Scrambler(Scrambler.Cubes.THREExTHREE);
-s.scramble("R U R' F2");
+var scrambleString = s.generateScramble();
 
 To then get a face:
 
@@ -15,9 +15,13 @@ s.rface
 
 Whatever color you want
 
-After scramble is done:
-s.reset();
-s.scramble("R U...");
+When it is time for a new scramble:
+scrambleString = s.generateScramble();
+
+The Enum Scrambler.Cubes can also return the value of side length, might be useful for generalizing display
+Can be accessed with:
+
+s.cubeType // Would return 3 for a 3x3
 
 */
 
@@ -191,9 +195,82 @@ class Scrambler {
         }
     }
 
-    scramble(s){
+    generateScramble() {
+        
+        // Inclusive range of scramble lengths
+        const THREExTHREE_RANGE = [18,21];
+
+
+        const moves = ["U","D","R","L","F","B"];
+        var scramble = [];
+        var range;
+        switch (this.cubeType){
+            case Scrambler.Cubes.THREExTHREE:
+                range = THREExTHREE_RANGE;
+                break;
+        }
+        
+        // Gets opposite side move
+        // Ex. R -> L, U -> D
+        var opp = function (c) {
+            var i = moves.indexOf(c);
+            var io;
+            
+            if (i % 2 == 0){
+                io = i + 1;
+            } else {
+                io = i - 1;
+            }
+            
+            return moves[io];
+        }
+
+        this.reset();
+    
+    
+        var scrLength = Math.floor(Math.random() * (1 + range[1] - range[0])) + range[0];
+        
+        for (var i = 0; i < scrLength; i++){
+            var m;
+            var good;
+            do{
+                good = true;
+                m = moves[Math.floor(Math.random() * 6)];
+                
+                // Gets rid of the same moves back to back
+                if (scramble.length > 0 && scramble[scramble.length - 1][0] == m){
+                    good = false;
+                }
+                
+                // Gets rid of redundant moves after opposite moves
+                if (scramble.length > 1 && scramble[scramble.length - 1][0] == opp(m) && scramble[scramble.length - 2][0] == m){
+                    good = false;
+                }
+            } while (!good);
+            
+            // Adds modifiers
+            switch (Math.floor(Math.random() * 3)){
+                case 0:
+                  m += "'";
+                  break;
+                case 1:
+                  m += "2";
+                  break;
+            }
+            scramble.push(m);
+        }
+
+        this.scramble = scramble.join(" ");
+
+        this.doScramble();
+    
+        return this.scramble;
+    }
+
+    doScramble(){
         var moveCount;
         var t;
+        s = this.scramble;
         for (const move of s.split(" ")){
             if (move.length == 1){
                 moveCount = 1;
@@ -236,3 +313,7 @@ class Scrambler {
         }
     }
 }
+
+var s = new Scrambler(Scrambler.Cubes.THREExTHREE);
+var scrambleString = s.generateScramble();
+console.log(scrambleString);

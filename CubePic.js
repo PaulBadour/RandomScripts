@@ -63,21 +63,32 @@ class Scrambler {
     }
 
     rotateFace(s, n){
-        var t;
-        for (var i = 0; i < n; i++){
-            t = s[0][0];
-            s[0][0] = s[2][0];
-            s[2][0] = s[2][2];
-            s[2][2] = s[0][2];
-            s[0][2] = t;
-    
-            t = s[0][1];
-            s[0][1] = s[1][0];
-            s[1][0] = s[2][1];
-            s[2][1] = s[1][2];
-            s[1][2] = t;
+        const transpose = function(matrix) {
+            //return matrix;
+            return matrix[0].map((col, i) => matrix.map(row => row[i]));
         }
-    
+
+        // Flips the order of each column
+        // Ex. [1, 4, 7],           [3, 6, 9],
+        //     [2, 5, 8],      =    [2, 5, 8],
+        //     [3, 6, 9]            [1, 4, 7]
+        const flipColumns = function(matrix) {
+            //return matrix;
+            for (var i = 0; i < matrix.length / 2; i++){
+                var temp = matrix[i];
+                matrix[i] = matrix[matrix.length - i - 1];
+                matrix[matrix.length - i - 1] = temp;
+            }
+
+            return matrix;
+        }
+
+        n = 4 - n; // Since this code actually rotates CCW, we have to inverse the number of rotations to make it CW
+
+        for (var i = 0; i < n; i++){
+            s = flipColumns(transpose(s));
+        }
+        return s;
     }
 
     layerU(n){
@@ -195,7 +206,7 @@ class Scrambler {
         }
     }
 
-    generateScramble() {
+    generateScramble(genOnly = false) {
         
         // Inclusive range of scramble lengths
         const THREExTHREE_RANGE = [18,21];
@@ -224,8 +235,6 @@ class Scrambler {
             
             return moves[io];
         }
-
-        this.reset();
     
     
         var scrLength = Math.floor(Math.random() * (1 + range[1] - range[0])) + range[0];
@@ -261,16 +270,21 @@ class Scrambler {
         }
 
         this.scramble = scramble.join(" ");
+        if (!genOnly){
+            this.doScramble();
+        }
 
-        this.doScramble();
-    
         return this.scramble;
     }
 
     doScramble(){
         var moveCount;
         var t;
-        s = this.scramble;
+        var s = this.scramble;
+
+        
+        this.reset();
+
         for (const move of s.split(" ")){
             if (move.length == 1){
                 moveCount = 1;
@@ -282,31 +296,32 @@ class Scrambler {
             
             switch(move[0]){
                 case "U":
-                    this.rotateFace(this.wface, moveCount);
+                    this.wface = this.rotateFace(this.wface, moveCount);
                     this.layerU(moveCount);
+                    //console.log(this.wface);
                     break;
                 case "F":
-                    this.rotateFace(this.gface, moveCount);
+                    this.gface = this.rotateFace(this.gface, moveCount);
                     this.layerF(moveCount)
                     break;
 
                 case "R":
-                    this.rotateFace(this.rface, moveCount);
+                    this.rface = this.rotateFace(this.rface, moveCount);
                     this.layerR(moveCount);
                     break;
 
                 case "B":
-                    this.rotateFace(this.bface, moveCount);
+                    this.bface = this.rotateFace(this.bface, moveCount);
                     this.layerB(moveCount);
                     break;
 
                 case "L":
-                    this.rotateFace(this.oface, moveCount);
+                    this.oface = this.rotateFace(this.oface, moveCount);
                     this.layerL(moveCount);
                     break;
 
                 case "D":
-                    this.rotateFace(this.yface, moveCount);
+                    this.yface = this.rotateFace(this.yface, moveCount);
                     this.layerD(moveCount)
                     break;
             }
@@ -315,5 +330,9 @@ class Scrambler {
 }
 
 var s = new Scrambler(Scrambler.Cubes.THREExTHREE);
-var scrambleString = s.generateScramble();
-console.log(scrambleString);
+//var scrambleString = s.generateScramble(genOnly = true);
+s.scramble = "D` R` F B U R2 D B` U` F` B2 D2 U` B` R` D` L` B2 U D";
+s.doScramble();
+console.log(s.wface);
+console.log(s.gface);
+console.log(s.rface);

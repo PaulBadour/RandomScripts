@@ -4,7 +4,7 @@ Class that does all the math for scrambling picture
 
 Usage:
 
-var s = new Scrambler();
+var s = new Scrambler(Scrambler.Cubes.THREExTHREE);
 s.scramble("R U R' F2");
 
 To then get a face:
@@ -20,53 +20,42 @@ s.reset();
 s.scramble("R U...");
 
 */
+
+
 class Scrambler {
-    constructor(){
+
+    // This is essentially an enum
+    static Cubes = Object.freeze({
+        THREExTHREE: 3
+    });
+
+
+    constructor(cubeType){
         this.wface;
         this.gface;
         this.rface;
         this.bface;
         this.oface;
         this.yface;
+        this.cubeType = cubeType;
         this.reset();
     }
 
     reset() {
-        this.wface = [
-            ["w", "w", "w"],
-            ["w", "w", "w"],
-            ["w", "w", "w"]
-        ];
-    
-        this.gface = [
-            ["g", "g", "g"],
-            ["g", "g", "g"],
-            ["g", "g", "g"]
-        ];
-    
-        this.rface = [
-            ["r", "r", "r"],
-            ["r", "r", "r"],
-            ["r", "r", "r"]
-        ];
-    
-        this.bface = [
-            ["b", "b", "b"],
-            ["b", "b", "b"],
-            ["b", "b", "b"]
-        ];
-    
-        this.oface = [
-            ["o", "o", "o"],
-            ["o", "o", "o"],
-            ["o", "o", "o"]
-        ];
-    
-        this.yface = [
-            ["y", "y", "y"],
-            ["y", "y", "y"],
-            ["y", "y", "y"]
-        ];
+        this.wface = []
+        this.gface = []
+        this.rface = []
+        this.bface = []
+        this.oface = []
+        this.yface = []
+        for (var i = 0; i < this.cubeType; i++){
+            this.wface.push(new Array(this.cubeType).fill('w'));
+            this.gface.push(new Array(this.cubeType).fill('g'));
+            this.rface.push(new Array(this.cubeType).fill('r'));
+            this.bface.push(new Array(this.cubeType).fill('b'));
+            this.oface.push(new Array(this.cubeType).fill('o'));
+            this.yface.push(new Array(this.cubeType).fill('y'));
+        }
     }
 
     rotateFace(s, n){

@@ -138,8 +138,8 @@ class Scrambler {
         for (var i = 0; i < n; i++){
             t = this.gface[0][0];
             this.gface[0][0] = this.wface[0][0];
-            this.wface[0][0] = this.bface[0][2];
-            this.bface[0][2] = this.yface[0][0];
+            this.wface[0][0] = this.bface[2][2];
+            this.bface[2][2] = this.yface[0][0];
             this.yface[0][0] = t;
 
             t = this.gface[1][0];
@@ -150,8 +150,8 @@ class Scrambler {
 
             t = this.gface[2][0];
             this.gface[2][0] = this.wface[2][0];
-            this.wface[2][0] = this.bface[2][2];
-            this.bface[2][2] = this.yface[2][0];
+            this.wface[2][0] = this.bface[0][2];
+            this.bface[0][2] = this.yface[2][0];
             this.yface[2][0] = t;
         }
     }
@@ -247,3 +247,10 @@ class Scrambler {
         }
     }
 }
+
+var s = new Scrambler();
+s.scramble("R' U D2 L' B2 U' R' B' R2 F R2 B2 D2 L2 F' L D2 R'"); //
+console.log(s.wface);
+console.log(s.gface);
+console.log(s.rface);
+console.log(s.yface);

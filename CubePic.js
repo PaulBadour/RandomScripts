@@ -247,10 +247,3 @@ class Scrambler {
         }
     }
 }
-
-var s = new Scrambler();
-s.scramble("R' U D2 L' B2 U' R' B' R2 F R2 B2 D2 L2 F' L D2 R'"); //
-console.log(s.wface);
-console.log(s.gface);
-console.log(s.rface);
-console.log(s.yface);

@@ -256,10 +256,9 @@ class Scrambler {
         return this.scramble;
     }
 
-    doScramble(){
+    doScramble(s = this.scramble){
         var moveCount;
         var t;
-        var s = this.scramble;
 
         
         this.reset();

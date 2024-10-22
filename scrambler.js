@@ -28,7 +28,7 @@ If for whatever reason you want to generate a scramble without scrambling the vi
 var scramble = s.generateScramble(genOnly = true);
 
 */
-
+const DEBUG = true;
 
 class Scrambler {
 
@@ -229,6 +229,11 @@ class Scrambler {
                 if (scramble.length > 1 && scramble[scramble.length - 1][0] == opp(m) && scramble[scramble.length - 2][0] == m){
                     good = false;
                 }
+
+                // A 2x2 specific rule where two opposite moves can not be next to each other
+                if (this.cubeType == Scrambler.Cubes.TWOxTWO && scramble.length > 0 && scramble[scramble.length - 1][0] == opp(m)){
+                    good = false;
+                }
             } while (!good);
             
             // Adds modifiers
@@ -300,4 +305,11 @@ class Scrambler {
             }
         }
     }
+}
+
+
+if (DEBUG){
+    var s = new Scrambler(Scrambler.Cubes.TWOxTWO);
+    var str = s.generateScramble();
+    console.log(str);
 }

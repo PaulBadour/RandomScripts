@@ -34,7 +34,8 @@ class Scrambler {
 
     // This is essentially an enum
     static Cubes = Object.freeze({
-        THREExTHREE: 3
+        THREExTHREE: 3,
+        TWOxTWO: 2
     });
 
     static moves = ["R","U","F","L","D","B"];
@@ -179,7 +180,7 @@ class Scrambler {
         
         // Inclusive range of scramble lengths
         const THREExTHREE_RANGE = [18,21];
-
+        const TWOxTWO_RANGE = [11, 11];
 
         
         var scramble = [];
@@ -187,6 +188,10 @@ class Scrambler {
         switch (this.cubeType){
             case Scrambler.Cubes.THREExTHREE:
                 range = THREExTHREE_RANGE;
+                break;
+
+            case Scrambler.Cubes.TWOxTWO:
+                range = TWOxTWO_RANGE;
                 break;
         }
         

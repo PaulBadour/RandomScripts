@@ -23,6 +23,10 @@ Can be accessed with:
 
 s.cubeType // Would return 3 for a 3x3
 
+
+If for whatever reason you want to generate a scramble without scrambling the virtual cube:
+var scramble = s.generateScramble(genOnly = true);
+
 */
 
 
@@ -33,6 +37,7 @@ class Scrambler {
         THREExTHREE: 3
     });
 
+    static moves = ["R","U","F","L","D","B"];
 
     constructor(cubeType){
         this.wface;
@@ -43,6 +48,7 @@ class Scrambler {
         this.yface;
         this.cubeType = cubeType;
         this.reset();
+
     }
 
     reset() {
@@ -64,7 +70,6 @@ class Scrambler {
 
     rotateFace(s, n){
         const transpose = function(matrix) {
-            //return matrix;
             return matrix[0].map((col, i) => matrix.map(row => row[i]));
         }
 
@@ -73,7 +78,6 @@ class Scrambler {
         //     [2, 5, 8],      =    [2, 5, 8],
         //     [3, 6, 9]            [1, 4, 7]
         const flipColumns = function(matrix) {
-            //return matrix;
             for (var i = 0; i < matrix.length / 2; i++){
                 var temp = matrix[i];
                 matrix[i] = matrix[matrix.length - i - 1];
@@ -104,105 +108,70 @@ class Scrambler {
 
     layerD(n){
         var t;
+        var r = this.cubeType - 1;
         for (var i = 0; i < n; i++){
-            t = this.gface[2];
-            this.gface[2] = this.oface[2];
-            this.oface[2] = this.bface[2];
-            this.bface[2] = this.rface[2];
-            this.rface[2] = t;
+            t = this.gface[r];
+            this.gface[r] = this.oface[r];
+            this.oface[r] = this.bface[r];
+            this.bface[r] = this.rface[r];
+            this.rface[r] = t;
 
         }
     }
 
     layerR(n){
         var t;
+        var r = this.cubeType - 1;
         for (var i = 0; i < n; i++){
-            t = this.gface[0][2];
-            this.gface[0][2] = this.yface[0][2];
-            this.yface[0][2] = this.bface[2][0];
-            this.bface[2][0] = this.wface[0][2];
-            this.wface[0][2] = t;
-
-            t = this.gface[1][2];
-            this.gface[1][2] = this.yface[1][2];
-            this.yface[1][2] = this.bface[1][0];
-            this.bface[1][0] = this.wface[1][2];
-            this.wface[1][2] = t;
-
-            t = this.gface[2][2];
-            this.gface[2][2] = this.yface[2][2];
-            this.yface[2][2] = this.bface[0][0];
-            this.bface[0][0] = this.wface[2][2];
-            this.wface[2][2] = t;
+            for (var j = 0; j < this.cubeType; j++){
+                t = this.gface[j][r];
+                this.gface[j][r] = this.yface[j][r];
+                this.yface[j][r] = this.bface[r - j][0];
+                this.bface[r - j][0] = this.wface[j][r];
+                this.wface[j][r] = t;
+            }
         }
     }
 
     layerL(n){
         var t;
+        var r = this.cubeType - 1;
         for (var i = 0; i < n; i++){
-            t = this.gface[0][0];
-            this.gface[0][0] = this.wface[0][0];
-            this.wface[0][0] = this.bface[2][2];
-            this.bface[2][2] = this.yface[0][0];
-            this.yface[0][0] = t;
-
-            t = this.gface[1][0];
-            this.gface[1][0] = this.wface[1][0];
-            this.wface[1][0] = this.bface[1][2];
-            this.bface[1][2] = this.yface[1][0];
-            this.yface[1][0] = t;
-
-            t = this.gface[2][0];
-            this.gface[2][0] = this.wface[2][0];
-            this.wface[2][0] = this.bface[0][2];
-            this.bface[0][2] = this.yface[2][0];
-            this.yface[2][0] = t;
+            for (var j = 0; j < this.cubeType; j++){
+                t = this.gface[j][0];
+                this.gface[j][0] = this.wface[j][0];
+                this.wface[j][0] = this.bface[r-j][r];
+                this.bface[r-j][r] = this.yface[j][0];
+                this.yface[j][0] = t;
+            }
         }
     }
 
     layerF(n){
         var t;
+        var r = this.cubeType - 1;
         for (var i = 0; i < n; i++){
-            t = this.wface[2][0];
-            this.wface[2][0] = this.oface[2][2];
-            this.oface[2][2] = this.yface[0][2];
-            this.yface[0][2] = this.rface[0][0];
-            this.rface[0][0] = t;
-
-            t = this.wface[2][1];
-            this.wface[2][1] = this.oface[1][2];
-            this.oface[1][2] = this.yface[0][1];
-            this.yface[0][1] = this.rface[1][0];
-            this.rface[1][0] = t;
-
-            t = this.wface[2][2];
-            this.wface[2][2] = this.oface[0][2];
-            this.oface[0][2] = this.yface[0][0];
-            this.yface[0][0] = this.rface[2][0];
-            this.rface[2][0] = t;
+            for (var j = 0; j < this.cubeType; j++){
+                t = this.wface[r][j];
+                this.wface[r][j] = this.oface[r-j][r];
+                this.oface[r-j][r] = this.yface[0][r-j];
+                this.yface[0][r-j] = this.rface[j][0];
+                this.rface[j][0] = t;
+            }
         }
     }
 
     layerB(n){
         var t;
+        var r = this.cubeType - 1;
         for (var i = 0; i < n; i++){
-            t = this.wface[0][0];
-            this.wface[0][0] = this.rface[0][2];
-            this.rface[0][2] = this.yface[2][2];
-            this.yface[2][2] = this.oface[2][0];
-            this.oface[2][0] = t;
-
-            t = this.wface[0][1];
-            this.wface[0][1] = this.rface[1][2];
-            this.rface[1][2] = this.yface[2][1];
-            this.yface[2][1] = this.oface[1][0];
-            this.oface[1][0] = t;
-
-            t = this.wface[0][2];
-            this.wface[0][2] = this.rface[2][2];
-            this.rface[2][2] = this.yface[2][0];
-            this.yface[2][0] = this.oface[0][0];
-            this.oface[0][0] = t;
+            for (var j = 0; j < this.cubeType; j++){
+                t = this.wface[0][j];
+                this.wface[0][j] = this.rface[j][r];
+                this.rface[j][r] = this.yface[r][r-j];
+                this.yface[r][r-j] = this.oface[r-j][0];
+                this.oface[r-j][0] = t;
+            }
         }
     }
 
@@ -212,7 +181,7 @@ class Scrambler {
         const THREExTHREE_RANGE = [18,21];
 
 
-        const moves = ["U","D","R","L","F","B"];
+        
         var scramble = [];
         var range;
         switch (this.cubeType){
@@ -224,16 +193,16 @@ class Scrambler {
         // Gets opposite side move
         // Ex. R -> L, U -> D
         var opp = function (c) {
-            var i = moves.indexOf(c);
+            var i = Scrambler.moves.indexOf(c);
             var io;
             
-            if (i % 2 == 0){
-                io = i + 1;
+            if (i < 3){
+                io = i + 3;
             } else {
-                io = i - 1;
+                io = i - 3;
             }
             
-            return moves[io];
+            return Scrambler.moves[io];
         }
     
     
@@ -244,7 +213,7 @@ class Scrambler {
             var good;
             do{
                 good = true;
-                m = moves[Math.floor(Math.random() * 6)];
+                m = Scrambler.moves[Math.floor(Math.random() * 6)];
                 
                 // Gets rid of the same moves back to back
                 if (scramble.length > 0 && scramble[scramble.length - 1][0] == m){
@@ -298,7 +267,6 @@ class Scrambler {
                 case "U":
                     this.wface = this.rotateFace(this.wface, moveCount);
                     this.layerU(moveCount);
-                    //console.log(this.wface);
                     break;
                 case "F":
                     this.gface = this.rotateFace(this.gface, moveCount);
@@ -328,28 +296,3 @@ class Scrambler {
         }
     }
 }
-
-var s = new Scrambler(Scrambler.Cubes.THREExTHREE);
-//var scrambleString = s.generateScramble(genOnly = true);
-s.scramble = "D` R` F B U R2 D B` U` F` B2 D2 U` B` R` D` L` B2 U D";
-s.doScramble();
-console.log(s.wface);
-console.log(s.gface);
-console.log(s.rface);
-
-
-// Potential move format:
-
-/*
-
-    R = [
-        [green, COL, -1, 0],
-        [yellow, COL, -1, 0],
-        [blue, COL, 0, -1],
-        [white, COL, -1, 0]
-    ];
-
-    Format: [Color, COL or ROW, Which COl/ROW, Start at start or end of ROW/COL]
-    New Class/Struct seems ideal for this
-
-*/

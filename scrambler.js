@@ -28,14 +28,18 @@ If for whatever reason you want to generate a scramble without scrambling the vi
 var scramble = s.generateScramble(genOnly = true);
 
 */
-const DEBUG = true;
+const DEBUG = false;
 
 class Scrambler {
 
     // This is essentially an enum
     static Cubes = Object.freeze({
+        TWOxTWO: 2,
         THREExTHREE: 3,
-        TWOxTWO: 2
+        FOURxFOUR: 4,
+        FIVExFIVE: 5,
+        SIXxSIX: 6,
+        SEVENxSEVEN: 7
     });
 
     static moves = ["R","U","F","L","D","B"];
@@ -96,82 +100,99 @@ class Scrambler {
         return s;
     }
 
-    layerU(n){
+    layerU(n, wc){
         var t;
-        for (var i = 0; i < n; i++){
-            t = this.gface[0];
-            this.gface[0] = this.rface[0];
-            this.rface[0] = this.bface[0];
-            this.bface[0] = this.oface[0];
-            this.oface[0] = t;
-        }
-    }
-
-    layerD(n){
-        var t;
-        var r = this.cubeType - 1;
-        for (var i = 0; i < n; i++){
-            t = this.gface[r];
-            this.gface[r] = this.oface[r];
-            this.oface[r] = this.bface[r];
-            this.bface[r] = this.rface[r];
-            this.rface[r] = t;
-
-        }
-    }
-
-    layerR(n){
-        var t;
-        var r = this.cubeType - 1;
-        for (var i = 0; i < n; i++){
-            for (var j = 0; j < this.cubeType; j++){
-                t = this.gface[j][r];
-                this.gface[j][r] = this.yface[j][r];
-                this.yface[j][r] = this.bface[r - j][0];
-                this.bface[r - j][0] = this.wface[j][r];
-                this.wface[j][r] = t;
+        for (var w = 0; w < wc; w++){
+            for (var i = 0; i < n; i++){
+                t = this.gface[w];
+                this.gface[w] = this.rface[w];
+                this.rface[w] = this.bface[w];
+                this.bface[w] = this.oface[w];
+                this.oface[w] = t;
             }
         }
     }
 
-    layerL(n){
+    layerD(n, wc){
         var t;
-        var r = this.cubeType - 1;
-        for (var i = 0; i < n; i++){
-            for (var j = 0; j < this.cubeType; j++){
-                t = this.gface[j][0];
-                this.gface[j][0] = this.wface[j][0];
-                this.wface[j][0] = this.bface[r-j][r];
-                this.bface[r-j][r] = this.yface[j][0];
-                this.yface[j][0] = t;
+        var r;
+        for (var w = 0; w < wc; w++) {
+            r = this.cubeType - 1 - w;
+            for (var i = 0; i < n; i++){
+                t = this.gface[r];
+                this.gface[r] = this.oface[r];
+                this.oface[r] = this.bface[r];
+                this.bface[r] = this.rface[r];
+                this.rface[r] = t;
+
             }
         }
     }
 
-    layerF(n){
+    layerR(n, wc){
         var t;
-        var r = this.cubeType - 1;
-        for (var i = 0; i < n; i++){
-            for (var j = 0; j < this.cubeType; j++){
-                t = this.wface[r][j];
-                this.wface[r][j] = this.oface[r-j][r];
-                this.oface[r-j][r] = this.yface[0][r-j];
-                this.yface[0][r-j] = this.rface[j][0];
-                this.rface[j][0] = t;
+        var r;
+        for (var w = 0; w < wc; w++){
+            r = this.cubeType - 1;
+            for (var i = 0; i < n; i++){
+                for (var j = 0; j < this.cubeType; j++){
+                    t = this.gface[j][r];
+                    this.gface[j][r - w] = this.yface[j][r - w];
+                    this.yface[j][r - w] = this.bface[r - j][w];
+                    this.bface[r - j][w] = this.wface[j][r - w];
+                    this.wface[j][r - w] = t;
+                }
             }
         }
     }
 
-    layerB(n){
+    layerL(n, wc){
         var t;
-        var r = this.cubeType - 1;
-        for (var i = 0; i < n; i++){
-            for (var j = 0; j < this.cubeType; j++){
-                t = this.wface[0][j];
-                this.wface[0][j] = this.rface[j][r];
-                this.rface[j][r] = this.yface[r][r-j];
-                this.yface[r][r-j] = this.oface[r-j][0];
-                this.oface[r-j][0] = t;
+        var r;
+        for (var w = 0; w < wc; w++){
+            r = this.cubeType - 1;
+            for (var i = 0; i < n; i++){
+                for (var j = 0; j < this.cubeType; j++){
+                    t = this.gface[j][w];
+                    this.gface[j][w] = this.wface[j][w];
+                    this.wface[j][w] = this.bface[r-j][r - w];
+                    this.bface[r-j][r - w] = this.yface[j][w];
+                    this.yface[j][w] = t;
+                }
+            }
+        }
+    }
+
+    layerF(n, wc){
+        var t;
+        var r;
+        for (var w = 0; w < wc; w++){
+            r = this.cubeType - 1;
+            for (var i = 0; i < n; i++){
+                for (var j = 0; j < this.cubeType; j++){
+                    t = this.wface[r - w][j];
+                    this.wface[r - w][j] = this.oface[r-j][r - w];
+                    this.oface[r-j][r - w] = this.yface[w][r-j];
+                    this.yface[w][r-j] = this.rface[j][w];
+                    this.rface[j][w] = t;
+                }
+            }
+        }
+    }
+
+    layerB(n, wc){
+        var t;
+        var r;
+        for (var w = 0; w < wc; w++){
+            r = this.cubeType - 1;
+            for (var i = 0; i < n; i++){
+                for (var j = 0; j < this.cubeType; j++){
+                    t = this.wface[w][j];
+                    this.wface[w][j] = this.rface[j][r-w];
+                    this.rface[j][r-w] = this.yface[r-w][r-j];
+                    this.yface[r-w][r-j] = this.oface[r-j][w];
+                    this.oface[r-j][w] = t;
+                }
             }
         }
     }
@@ -181,8 +202,15 @@ class Scrambler {
         // Inclusive range of scramble lengths
         const THREExTHREE_RANGE = [18,21];
         const TWOxTWO_RANGE = [11, 11];
-
+        const FOURxFOUR_RANGE = [42, 47];
+        const FIVExFIVE_RANGE = [60, 60];
+        const SIXxSIX_RANGE = [64, 64];
+        const SEVENxSEVEN_RANGE = [100, 100]; // I almost threw up when i found this number
         
+        // I noticed that 4x4 scrambles did not have any wedge moves in the first 40% of moves per scramble, so this simulates that
+        const FOURxFOUR_GRACE = [18, 21];
+        var grace = Math.floor(Math.random() * (1 + FOURxFOUR_GRACE[1] - FOURxFOUR_GRACE[0])) + FOURxFOUR_GRACE[0];
+
         var scramble = [];
         var range;
         switch (this.cubeType){
@@ -192,6 +220,26 @@ class Scrambler {
 
             case Scrambler.Cubes.TWOxTWO:
                 range = TWOxTWO_RANGE;
+                break;
+
+            case Scrambler.Cubes.FOURxFOUR:
+                range = FOURxFOUR_RANGE;
+                break;
+
+            case Scrambler.Cubes.FIVExFIVE:
+                range = FIVExFIVE_RANGE;
+                break;
+
+            case Scrambler.Cubes.SIXxSIX:
+                range = SIXxSIX_RANGE;
+                break;
+
+            case Scrambler.Cubes.SEVENxSEVEN:
+                range = SEVENxSEVEN_RANGE;
+                break;
+
+            default:
+                range = THREExTHREE_RANGE;
                 break;
         }
         
@@ -235,6 +283,23 @@ class Scrambler {
                     good = false;
                 }
             } while (!good);
+
+            // Special rule for 4x4
+            if (this.cubeType == Scrambler.Cubes.FOURxFOUR && scramble.length > grace && Math.floor(Math.random() * 2) == 0){
+                m += "w";
+            } // The special rule for 5x5 since it is different than 4x4
+            else if (this.cubeType == Scrambler.Cubes.FIVExFIVE && Math.floor(Math.random() * 2) == 0){
+                m += "w";
+            } else if (this.cubeType == Scrambler.Cubes.SIXxSIX || this.cubeType == Scrambler.Cubes.SEVENxSEVEN){
+                switch (Math.floor(Math.random() * 3)){
+                    case 0:
+                        m += "w";
+                        break
+                    case 1:
+                        m = "3" + m + "w";
+                        break;
+                }
+            }
             
             // Adds modifiers
             switch (Math.floor(Math.random() * 3)){
@@ -258,48 +323,64 @@ class Scrambler {
 
     doScramble(s = this.scramble){
         var moveCount;
-        var t;
+        var wedgeCount;
 
         
         this.reset();
 
         for (const move of s.split(" ")){
-            if (move.length == 1){
+
+            var mdir = move[0] == '3' ? move[1] : move[0];
+            var mlast = move[move.length - 1];
+
+            if (move.length == 1 || move[1] != 'w'){
+                wedgeCount = 1;
+            } else if (move[1] == 'w'){
+                wedgeCount = 2;
+            } else {
+                wedgeCount = 3;
+            }
+
+            
+            if (move.length == 1 || mlast == 'w'){
                 moveCount = 1;
-            } else if (move[1] == "2"){
+            } else if (mlast == "2"){
                 moveCount = 2;
             } else {
                 moveCount = 3;
             }
-            
-            switch(move[0]){
+
+            switch(mdir){
                 case "U":
                     this.wface = this.rotateFace(this.wface, moveCount);
-                    this.layerU(moveCount);
+                    this.layerU(moveCount, wedgeCount);
                     break;
                 case "F":
                     this.gface = this.rotateFace(this.gface, moveCount);
-                    this.layerF(moveCount)
+                    this.layerF(moveCount, wedgeCount)
                     break;
 
                 case "R":
                     this.rface = this.rotateFace(this.rface, moveCount);
-                    this.layerR(moveCount);
+                    this.layerR(moveCount, wedgeCount);
                     break;
 
                 case "B":
                     this.bface = this.rotateFace(this.bface, moveCount);
-                    this.layerB(moveCount);
+                    this.layerB(moveCount, wedgeCount);
                     break;
 
                 case "L":
                     this.oface = this.rotateFace(this.oface, moveCount);
-                    this.layerL(moveCount);
+                    this.layerL(moveCount, wedgeCount);
                     break;
 
                 case "D":
                     this.yface = this.rotateFace(this.yface, moveCount);
-                    this.layerD(moveCount)
+                    this.layerD(moveCount, wedgeCount)
+                    break;
+                default:
+                    console.log("Error Move");
                     break;
             }
         }
@@ -308,7 +389,10 @@ class Scrambler {
 
 
 if (DEBUG){
-    var s = new Scrambler(Scrambler.Cubes.TWOxTWO);
+    var s = new Scrambler(Scrambler.Cubes.SEVENxSEVEN);
     var str = s.generateScramble();
     console.log(str);
+    console.log(s.wface);
+    console.log(s.gface);
+    console.log(s.rface);
 }

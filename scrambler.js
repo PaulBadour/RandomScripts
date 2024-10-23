@@ -333,7 +333,7 @@ class Scrambler {
             var mdir = move[0] == '3' ? move[1] : move[0];
             var mlast = move[move.length - 1];
 
-            if (move.length == 1 || move[1] != 'w'){
+            if (!move.includes('w')){
                 wedgeCount = 1;
             } else if (move[1] == 'w'){
                 wedgeCount = 2;
@@ -389,7 +389,7 @@ class Scrambler {
 
 
 if (DEBUG){
-    var s = new Scrambler(Scrambler.Cubes.FIVExFIVE);
+    var s = new Scrambler(Scrambler.Cubes.SIXxSIX);
     var str = s.generateScramble();
     console.log(str);
     console.log(s.wface);

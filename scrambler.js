@@ -290,7 +290,8 @@ class Scrambler {
             } // The special rule for 5x5 since it is different than 4x4
             else if (this.cubeType == Scrambler.Cubes.FIVExFIVE && Math.floor(Math.random() * 2) == 0){
                 m += "w";
-            } else if (this.cubeType == Scrambler.Cubes.SIXxSIX || this.cubeType == Scrambler.Cubes.SEVENxSEVEN){
+            } // Rules for 6 and 7 are below 
+            else if (this.cubeType == Scrambler.Cubes.SIXxSIX || this.cubeType == Scrambler.Cubes.SEVENxSEVEN){
                 switch (Math.floor(Math.random() * 3)){
                     case 0:
                         m += "w";
@@ -325,7 +326,6 @@ class Scrambler {
         var moveCount;
         var wedgeCount;
 
-        ff
         this.reset();
 
         for (const move of s.split(" ")){
@@ -389,7 +389,7 @@ class Scrambler {
 
 
 if (DEBUG){
-    var s = new Scrambler(Scrambler.Cubes.SEVENxSEVEN);
+    var s = new Scrambler(Scrambler.Cubes.FIVExFIVE);
     var str = s.generateScramble();
     console.log(str);
     console.log(s.wface);

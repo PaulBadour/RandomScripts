@@ -313,19 +313,19 @@ class Scrambler {
             scramble.push(m);
         }
 
-        this.scramble = scramble.join(" ");
+        scramble = scramble.join(" ");
         if (!genOnly){
-            this.doScramble();
+            this.doScramble(scramble);
         }
 
-        return this.scramble;
+        return scramble;
     }
 
-    doScramble(s = this.scramble){
+    doScramble(s){
         var moveCount;
         var wedgeCount;
 
-        
+        ff
         this.reset();
 
         for (const move of s.split(" ")){
